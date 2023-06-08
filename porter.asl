@@ -45,3 +45,8 @@ split
         }
     }
 }
+
+isLoading
+{
+    return true;
+}
