@@ -37,7 +37,7 @@ gameTime
 
 split
 {
-    if (current.startx != old.startx || current.starty != old.starty) {
+    if (current.startx != old.startx) {
         if (vars.sectionEnds.Contains(new Tuple<int, int>(old.startx, old.starty))) {
             return settings["split_level"] || settings["split_section"];
         } else {
