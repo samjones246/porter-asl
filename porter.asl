@@ -1,48 +1,40 @@
-state("porter")
+state("porter1.1")
 {
-    int timer: 0x4363FA;
-    int startx: 0x4363EA;
-    int starty: 0x4363EE;
+    ushort timer: 0x4363FA;
+    ushort timerFraction: 0x4363F8;
+    ushort level: 0x4363FE;
+    bool started: 0x43640E;
 }
 
 startup
 {
-    vars.sectionEnds = new List<Tuple<int, int>>() {
-        new Tuple<int, int>(408, 16),
-        new Tuple<int, int>(40, 144),
-        new Tuple<int, int>(392, 216),
-        new Tuple<int, int>(912, 200),
-        new Tuple<int, int>(400, 344),
-        new Tuple<int, int>(920, 344),
-    };
-
-    settings.Add("split_level", false, "Split after each level");
-    settings.Add("split_section", true, "Split after each section");
+    settings.Add("split_level", true, "Split after level");
+    for (int i = 0; i < 28; i++)
+    {
+        settings.Add("split_level_"+(i+1), true, "Level "+(i+1), "split_level");
+    }
 }
 
 start
 {
-    return current.timer > 0 && old.timer == 0;
+    return current.timer == 0 && current.timerFraction > 0 && old.timerFraction == 0;
 }
 
 reset
 {
-    return current.timer == 0 && old.timer != 0;
+    return current.timer < old.timer;
 }
 
 gameTime
 {
-    return TimeSpan.FromSeconds((double)current.timer);
+    double fraction = current.timerFraction * 0.0000152587890625; // 1/65536
+    return TimeSpan.FromSeconds((double)current.timer + fraction);
 }
 
 split
 {
-    if (current.startx != old.startx) {
-        if (vars.sectionEnds.Contains(new Tuple<int, int>(old.startx, old.starty))) {
-            return settings["split_level"] || settings["split_section"];
-        } else {
-            return settings["split_level"];
-        }
+    if (current.level != old.level) {
+        return settings["split_level_"+old.level];
     }
 }
 
