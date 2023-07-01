@@ -1,9 +1,10 @@
-state("porter1.1")
+state("porter1.2")
 {
     ushort timer: 0x4363FA;
     ushort timerFraction: 0x4363F8;
     ushort level: 0x4363FE;
-    bool started: 0x43640E;
+    bool started: 0x43C924;
+    bool finished: 0x43C925;
 }
 
 startup
@@ -17,12 +18,12 @@ startup
 
 start
 {
-    return current.timer == 0 && current.timerFraction > 0 && old.timerFraction == 0;
+    return current.started && !old.started;
 }
 
 reset
 {
-    return current.timer < old.timer;
+    return !current.started && old.started;
 }
 
 gameTime
@@ -33,6 +34,10 @@ gameTime
 
 split
 {
+    if(current.finished && !old.finished) {
+        return true;
+    }
+    
     if (current.level != old.level) {
         return settings["split_level_"+old.level];
     }
