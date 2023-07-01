@@ -7,6 +7,15 @@ state("porter1.2")
     bool finished: 0x43C925;
 }
 
+state("porterkk")
+{
+    ushort timer: 0x4363FA;
+    ushort timerFraction: 0x4363F8;
+    ushort level: 0x4363FE;
+    bool started: 0x43C926;
+    bool finished: 0x43C927;
+}
+
 startup
 {
     settings.Add("split_level", true, "Split after level");
